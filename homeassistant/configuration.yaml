@@ -1,1 +1,73 @@
-# TODO put here configuration file from Raspeberry Pi 3
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: 50.516503
+  longitude: 4.670249
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 150
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Brussels
+
+# Show links to resources in log and frontend
+introduction:
+
+# Enables the frontend
+frontend:
+
+# Enables configuration UI
+config:
+
+http:
+  # Uncomment this to add a password (recommended!)
+  # api_password: PASSWORD
+  # Uncomment this if you are using SSL or running in Docker etc
+  # base_url: example.duckdns.org:8123
+
+# Checks for available updates
+updater:
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time.
+history:
+
+# View all events in a logbook
+logbook:
+
+# Track the sun
+sun:
+
+# MQTT Broker
+mqtt:
+  broker: 192.168.1.10
+  port: 1883
+  protocol: 3.1 
+
+# Sensors
+sensor:
+  # Weather Prediction
+  - platform: yr
+  # MQTT
+  - platform: mqtt
+    state_topic: "home/livingroom/temperature"
+    name: "Temperature Living"
+  - platform: mqtt
+    state_topic: "home/external/temperature"
+    name: "Temperature Exterieure"
+
+# Text to speech
+tts:
+  platform: google
+
+# Groups
+group: !include groups.yaml
+
+zwave:
+  device_config: !include zwave_device_config.yaml
