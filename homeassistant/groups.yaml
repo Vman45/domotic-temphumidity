@@ -1,0 +1,47 @@
+  default_view:
+    view: no
+    entities:
+      - group.climate
+      - group.temperature
+      - group.humidity
+      - group.living
+      - group.outside
+  climate:
+    name: Climate
+    icon: mdi:weather-partlycloudy
+    view: yes
+    entities:
+      - sensor.temperature_living
+      - sensor.temperature_outside
+      - sensor.humidity_living
+      - sensor.humidity_outside
+  temperature:
+    name: Temperature
+    icon: mdi:thermometer
+    view: yes
+    entities:
+      - sensor.temperature_living
+      - sensor.temperature_outside
+  humidity:
+    name: Humidity
+    icon: mdi:water-percent
+    view: yes
+    entities:
+      - sensor.humidity_living
+      - sensor.humidity_outside
+  living:
+    name: Living
+    icon: mdi:sofa
+    view: yes
+    entities:
+      - sensor.temperature_living
+      - sensor.humidity_living
+  outside:
+    name: Outside
+    icon: mdi:border-outside
+    view: yes
+    entities:
+      - sensor.temperature_outside
+      - sensor.humidity_outside
+
+
