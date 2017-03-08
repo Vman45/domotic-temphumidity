@@ -2,8 +2,8 @@ homeassistant:
   # Name of the location where Home Assistant is running
   name: Home
   # Location required to calculate the time the sun rises and sets
-  latitude: 50.516503
-  longitude: 4.670249
+  latitude: !secret latitude_home
+  longitude: !secret longitude_home
   # Impacts weather/sunrise data (altitude above sea level in meters)
   elevation: 150
   # metric for Metric, imperial for Imperial
@@ -48,7 +48,7 @@ sun:
 mqtt:
   broker: 192.168.1.10
   port: 1883
-  protocol: 3.1 
+  protocol: 3.1
 
 # Sensors
 sensor:
