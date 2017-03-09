@@ -6,6 +6,7 @@
       - group.humidity
       - group.living
       - group.outside
+      - group.nas
   climate:
     name: Climate
     icon: mdi:weather-partlycloudy
@@ -43,5 +44,13 @@
     entities:
       - sensor.temperature_outside
       - sensor.humidity_outside
-
-
+  nas:
+    name: NAS
+    icon: mdi:network
+    view: yes
+    entities:
+      - sensor.cpu_load_total
+      - sensor.memory_usage_real
+      - sensor.network_up
+      - sensor.network_down
+      - sensor.volume_used_volume_1
