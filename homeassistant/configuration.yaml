@@ -11,6 +11,68 @@ homeassistant:
   # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/Brussels
 
+# Zones
+zone:
+  name: School
+  latitude: !secret latitude
+  longitude: !secret longitude
+  radius: 100
+  icon: mdi:school
+
+zone 2:
+  name: SmalsCH
+  latitude: !secret latitude
+  longitude: !secret longitude
+  radius: 100
+  icon: mdi:worker
+
+zone 3:
+  name: SmalsSC
+  latitude: !secret latitude
+  longitude: !secret longitude
+  radius: 100
+  icon: mdi:worker
+
+zone 4:
+  name: SncbMidi
+  latitude: !secret latitude
+  longitude: !secret longitude
+  radius: 100
+  icon: mdi:train
+
+zone 5:
+  name: SncbGbx
+  latitude: !secret latitude
+  longitude: !secret longitude
+  radius: 200
+  icon: mdi:train
+
+zone 6:
+  name: Cortil
+  latitude: !secret latitude
+  longitude: !secret longitude
+  radius: 50
+  icon: mdi:human-child
+
+zone 7:
+  name: GdManil
+  latitude: !secret latitude
+  longitude: !secret longitude
+  radius: 50
+  icon: mdi:human-child
+
+zone 8:
+  name: Bcsf
+  latitude: !secret latitude
+  longitude: !secret longitude
+  radius: 50
+  icon: mdi:soccer
+
+# OwnTracks
+#device_tracker:
+#  - platform: owntracks
+#    max_gps_accuracy: 100
+
 # Show links to resources in log and frontend
 introduction:
 
@@ -48,7 +110,9 @@ sun:
 mqtt:
   broker: 192.168.1.10
   port: 1883
-  protocol: 3.1
+  #username:
+  #password:
+  protocol: 3.1 
 
 # Sensors
 sensor:
@@ -57,10 +121,46 @@ sensor:
   # MQTT
   - platform: mqtt
     state_topic: "home/livingroom/temperature"
+    value_template: "{{ value_json.temperature }}"
+    unit_of_measurement: "C"
     name: "Temperature Living"
   - platform: mqtt
-    state_topic: "home/external/temperature"
-    name: "Temperature Exterieure"
+    state_topic: "home/livingroom/humidity"
+    value_template: "{{ value_json.humidity }}"
+    unit_of_measurement: "%"
+    name: "Humidity Living"
+  - platform: mqtt
+    state_topic: "home/outside/temperature"
+    unit_of_measurement: "C"
+    name: "Temperature Outside"
+  - platform: mqtt
+    state_topic: "home/outside/humidity"
+    unit_of_measurement: "%"
+    name: "Humidity Outside"
+  # Synology DSM
+  - platform: synologydsm
+    host: 192.168.1.55
+    port: 5000
+    username: !secret user
+    password: !secret passwd
+    monitored_conditions:
+      - cpu_total_load
+      - memory_real_usage
+      - network_up
+      - network_down
+      - volume_percentage_used
+
+# InfluxDB
+influxdb:
+  host: 192.168.1.10
+  port: 8086
+  #username:
+  #password:
+  whitelist:
+  - sensor.temperature_living
+  - sensor.humidity_living
+  tags:
+    source: hass  
 
 # Text to speech
 tts:
