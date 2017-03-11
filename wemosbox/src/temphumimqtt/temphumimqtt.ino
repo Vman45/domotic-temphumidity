@@ -6,20 +6,22 @@
 #include <DallasTemperature.h>
 
 #include <DNSServer.h>
-
-#include <PubSubClient.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>
 
+#include <PubSubClient.h>
+
 #include <ArduinoJson.h>
 
-#define ssid      // WiFi SSID
-#define password      // WiFi password
+#define ssid     "" // WiFi SSID
+#define password "" // WiFi password
 
 
 // DHT Config ***************************************************************
+// DHT Sensor on pin D3
 #define DHTPIN D3
+// Using a DHT22 sensor
 #define DHTTYPE DHT22
 
 DHT dht(DHTPIN, DHTTYPE);
@@ -31,9 +33,10 @@ DHT dht(DHTPIN, DHTTYPE);
 // #define mqtt_pass   "mqtt_pass"
 #define out_temp_topic "home/livingroom/temperature"
 #define out_hum_topic  "home/livingroom/humidity"
+#define out_batt_topic "home/livingroom/battery"
 
 // DS18B20 Sensor Config *****************************************************
-// Data wire is plugged into port 2 on the Arduino 
+// Data wire is plugged into port D2 on the WeMos 
 // Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
 OneWire oneWire(D2);
 
@@ -58,8 +61,24 @@ PubSubClient client(espClient);
 ESP8266WebServer server (80);
 
 // Measurement *****************************************************************
+// Temp
+//   - DS18B20
 float t = 0;
+//   - DHT22
+float t2 = 0;
+// Humidity
+//   - DHT22
 float h = 0;
+
+// Battery Voltage
+//     Const
+const float tMaxA0 = 3.3; // Tmax permissible by the A/D converter on pin A0
+const float coeff = 0.18; // Divider bridge coeff in ohms = (R1 / (R1 + R2)) where R1 = 1Kohms and R2 220ohms
+const float diff = 0.0;  // = Diff between calculation and voltmeter
+//     raw value read from A/D converter
+unsigned int raw = 0;
+//     real voltage
+float batV = 0;
 
 
 // Setup function. Here we do the basics **************************************
@@ -67,8 +86,9 @@ void setup(void) {
 
   Serial.begin(9600);
   pinMode(BUILTIN_LED, OUTPUT);
-
-  Serial.println("Dallas Temperature IC Control Library Demo");
+  pinMode(A0, INPUT);
+  
+  Serial.println("Domotic - Temperature and Humidity sensor");
   WiFiManager wifiManager;
 
   // locate devices on the bus
@@ -149,6 +169,9 @@ String getPage() {
   page += "       <li class='active'>";
   page += "          <a href='#'>Temperature : ";
   page += t;
+  page += " °C / ";
+  page += t2;
+  page += " °C";
   page += "</a>";
   page += "       </li>";
   page += "       <li class='active'>";
@@ -172,7 +195,7 @@ String getPage() {
 
 // *******************************************************************************************
 void handleRoot() {
-  server.send ( 200, "text/html", getPage() );
+  server.send (200, "text/html", getPage());
 }
 
 // Publishes temperature to MQTT server *************************************************************  
@@ -217,6 +240,25 @@ void publishHumidity(float p_humidity) {
   client.publish(out_hum_topic, data, true);
 }
 
+void publishBatteryVoltage(float p_voltage) {
+  // create a JSON object
+  // doc : https://github.com/bblanchon/ArduinoJson/wiki/API%20Reference
+  StaticJsonBuffer<100> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
+  // INFO: the data must be converted into a string; a problem occurs when using floats...
+  root["voltage"] = (String)p_voltage;
+  root.prettyPrintTo(Serial);
+  Serial.println("");
+  /*
+     {
+        "voltage": "3.79"
+     }
+  */
+  char data[100];
+  root.printTo(data, root.measureLength() + 1);
+  client.publish(out_batt_topic, data, true);
+}
+
 // Main function *****************************************************************************
 // Handles time between readings and publishes to MQTT
 void loop(void) {
@@ -234,18 +276,35 @@ void loop(void) {
     sensors.requestTemperatures(); // Send the command to get temperatures
     Serial.println("DONE");
     t = sensors.getTempC(insideThermometer);
+    Serial.print("Publishing temperature ... ");
+    publishTemperature(t);
+    Serial.println("DONE");
+    
     Serial.print("Requesting humidity ... ");
     h = dht.readHumidity();
-    previousPoll += sensorPolling;
-    
+    // t2 = dht.readTemperature();  // ONLY for test (to compare with DS18B20)
     if (isnan(h)) {
       Serial.println("ERROR: Failed to read from DHT sensor!");
       return;
     } else {
       Serial.println("DONE");
-      publishTemperature(t);
+      Serial.print("Publishing humidity ... ");
       publishHumidity(h);
-    }    
+      Serial.println("DONE");
+    }
+
+    Serial.print("Requesting battery voltage ... ");
+    // Reading value vrom A/D converter
+    unsigned int raw = analogRead(A0);
+    Serial.print("DONE ... raw ");
+    Serial.println(raw);
+    // Compute the real battery voltage
+    float batV = ((raw * (tMaxA0 / 1024)) / coeff) - diff;
+    Serial.print("Publishing temperature ... ");
+    publishBatteryVoltage(batV);
+    Serial.println("DONE");
+
+    previousPoll += sensorPolling;
   }
 }
 
