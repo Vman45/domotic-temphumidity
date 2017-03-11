@@ -61,6 +61,7 @@ sensor:
   # Weather Prediction
   - platform: yr
   # MQTT
+  # Living
   - platform: mqtt
     state_topic: "home/livingroom/temperature"
     value_template: "{{ value_json.temperature }}"
@@ -76,6 +77,7 @@ sensor:
     value_template: "{{ value_json.voltage }}"
     unit_of_measurement: "V"
     name: "Battery Voltage Living"
+  # Outside
   - platform: mqtt
     state_topic: "home/outside/temperature"
     unit_of_measurement: "C"
