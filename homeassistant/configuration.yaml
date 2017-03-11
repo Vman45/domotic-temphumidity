@@ -44,10 +44,16 @@ logbook:
 # Track the sun
 sun:
 
+# Text to speech
+tts:
+  platform: google
+
 # MQTT Broker
 mqtt:
   broker: 192.168.1.10
   port: 1883
+  #username: !secret mqtt_user
+  #password: !secret mqtt_password
   protocol: 3.1
 
 # Sensors
@@ -57,17 +63,68 @@ sensor:
   # MQTT
   - platform: mqtt
     state_topic: "home/livingroom/temperature"
+    value_template: "{{ value_json.temperature }}"
+    unit_of_measurement: "C"
     name: "Temperature Living"
   - platform: mqtt
-    state_topic: "home/external/temperature"
-    name: "Temperature Exterieure"
+    state_topic: "home/livingroom/humidity"
+    value_template: "{{ value_json.humidity }}"
+    unit_of_measurement: "%"
+    name: "Humidity Living"
+  - platform: mqtt
+    state_topic: "home/livingroom/battery"
+    value_template: "{{ value_json.voltage }}"
+    unit_of_measurement: "V"
+    name: "Battery Voltage Living"
+  - platform: mqtt
+    state_topic: "home/outside/temperature"
+    unit_of_measurement: "C"
+    name: "Temperature Outside"
+  - platform: mqtt
+    state_topic: "home/outside/humidity"
+    unit_of_measurement: "%"
+    name: "Humidity Outside"
+  - platform: mqtt
+    state_topic: "home/outside/battery"
+    value_template: "{{ value_json.voltage }}"
+    unit_of_measurement: "V"
+    name: "Battery Voltage Outside"
+  # Synology DSM
+  - platform: synologydsm
+    host: 192.168.1.55
+    port: 5000
+    username: !secret nas_user
+    password: !secret nas_password
+    monitored_conditions:
+      - cpu_total_load
+      - memory_real_usage
+      - network_up
+      - network_down
+      - volume_percentage_used
 
-# Text to speech
-tts:
-  platform: google
+# InfluxDB
+influxdb:
+  host: 192.168.1.10
+  port: 8086
+  #username: !secret influxdb_user
+  #password: !secret influxdb_password
+  whitelist:
+  - sensor.temperature_living
+  - sensor.humidity_living
+  - sensor.battery_voltage_living
+  tags:
+    source: hass
+
+# OwnTracks
+device_tracker:
+  - platform: owntracks
+    waypoints: True
 
 # Groups
 group: !include groups.yaml
 
-zwave:
-  device_config: !include zwave_device_config.yaml
+# Zones
+zone: !include_dir_list zones
+
+#zwave:
+#  device_config: !include zwave_device_config.yaml

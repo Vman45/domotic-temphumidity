@@ -6,6 +6,8 @@
       - group.humidity
       - group.living
       - group.outside
+      - group.nas
+      - group.battery
   climate:
     name: Climate
     icon: mdi:weather-partlycloudy
@@ -36,6 +38,7 @@
     entities:
       - sensor.temperature_living
       - sensor.humidity_living
+      - sensor.battery_voltage_living
   outside:
     name: Outside
     icon: mdi:border-outside
@@ -43,5 +46,21 @@
     entities:
       - sensor.temperature_outside
       - sensor.humidity_outside
-
-
+      - sensor.battery_voltage_outside
+  battery:
+    name: Battery
+    icon: mdi:battery-unknown
+    view: yes
+    entities:
+      - sensor.battery_voltage_living
+      - sensor.battery_voltage_outside
+  nas:
+    name: NAS
+    icon: mdi:network
+    view: yes
+    entities:
+      - sensor.cpu_load_total
+      - sensor.memory_usage_real
+      - sensor.network_up
+      - sensor.network_down
+      - sensor.volume_used_volume_1
