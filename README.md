@@ -50,8 +50,8 @@ et bien entendu dans la fonction `loop`:
 ##### MQTT
 Actuellement, chaque mesure est envoyée dans un topic dédié (ex: température du living dans `home/livingroom/temperature`) ce qui se traduit par 3 _publish_ (température, humidité et tension de la batterie).
 Améliorations possibles:
-* soit regrouper l'envoi de ces 3 mesures dans 1 seul _topic_ (ex: home/livingroom) et ensuite décomposer le message en 3 dans `HomeAssistant`.
-* soit revoir la nomenclature des _topics_ en y ajoutant un niveau supplémentaire: l'étage (ex: home/groundfloor/livingroom).  Source: http://www.hivemq.com/blog/mqtt-essentials-part-5-mqtt-topics-best-practices
+* soit regrouper l'envoi de ces 3 mesures dans 1 seul _topic_ (ex: `home/livingroom`) et ensuite décomposer le message en 3 dans `HomeAssistant`.
+* soit revoir la nomenclature des _topics_ en y ajoutant un niveau supplémentaire: l'_étage_ (ex: `home/groundfloor/livingroom/temperature`).  Source: http://www.hivemq.com/blog/mqtt-essentials-part-5-mqtt-topics-best-practices
 
 ## Quelques sources:
 * Mesure de la tension: http://www.projetsdiy.fr/mesurer-tension-alimentation-batterie-esp8266-arduino/#.WMXEVlXhCHs
