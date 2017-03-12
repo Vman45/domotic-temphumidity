@@ -140,7 +140,7 @@ automation:
       message: 'Update for Home Assistant is available.'
 # Sends notifications using PushBullet (if low battery voltage detected)
 automation 2:
-  alias: 'Low Volatage Notifications'
+  alias: 'Low Voltage Notifications'
   trigger:
     platform: numeric_state
     entity_id: sensor.battery_voltage_living
