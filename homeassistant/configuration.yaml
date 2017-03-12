@@ -126,7 +126,7 @@ device_tracker:
 notify:
   - name: Hass
     platform: pushbullet
-    api_key: 'o.DzuWQkzjuqCiTvKso8aPHBGuCKKA3W5Z'
+    api_key: !secret pushbullet_api_key
 
 # Notification from Updater (if a new version is availbale)
 automation:
@@ -139,20 +139,20 @@ automation:
     data:
       message: 'Update for Home Assistant is available.'
 # Sends notifications using PushBullet (if low battery voltage detected)
-#automation 2:
-#  alias: 'Low Volatage Notifications'
-#  trigger:
-#    platform: numeric_state
-#    entity_id: sensor.battery_voltage_living
+automation 2:
+  alias: 'Low Volatage Notifications'
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.battery_voltage_living
 #    value_template: '{{ states.sensor.battery_voltage_living.state }}'
-#  condition:
-#    condition: numeric_state
-#    entity_id: sensor.battery_voltage_living
-#    below: 3.8
-#  action:
-#    service: notify.pushbullet
-#    data_template:
-#      message: '{{ trigger.entity_id }}: low battery voltage detected {{ trigger.to_state.state }} !!'
+  condition:
+    condition: numeric_state
+    entity_id: sensor.battery_voltage_living
+    below: 3.8
+  action:
+    service: notify.pushbullet
+    data_template:
+      message: '{{ trigger.entity_id }}: low battery voltage detected {{ trigger.to_state.state }} !!'
 
 # Groups
 group: !include groups.yaml
