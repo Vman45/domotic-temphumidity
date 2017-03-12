@@ -22,7 +22,7 @@ config:
 
 http:
   # Uncomment this to add a password (recommended!)
-  # api_password: PASSWORD
+#  api_password: !secret http_password
   # Uncomment this if you are using SSL or running in Docker etc
   # base_url: example.duckdns.org:8123
 
@@ -121,6 +121,38 @@ influxdb:
 device_tracker:
   - platform: owntracks
     waypoints: True
+
+# Push notification to
+notify:
+  - name: Hass
+    platform: pushbullet
+    api_key: 'o.DzuWQkzjuqCiTvKso8aPHBGuCKKA3W5Z'
+
+# Notification from Updater (if a new version is availbale)
+automation:
+  alias: 'Update Available Notifications'
+  trigger:
+    platform: state
+    entity_id: updater.updater
+  action:
+    service: notify.notify
+    data:
+      message: 'Update for Home Assistant is available.'
+# Sends notifications using PushBullet (if low battery voltage detected)
+#automation 2:
+#  alias: 'Low Volatage Notifications'
+#  trigger:
+#    platform: numeric_state
+#    entity_id: sensor.battery_voltage_living
+#    value_template: '{{ states.sensor.battery_voltage_living.state }}'
+#  condition:
+#    condition: numeric_state
+#    entity_id: sensor.battery_voltage_living
+#    below: 3.8
+#  action:
+#    service: notify.pushbullet
+#    data_template:
+#      message: '{{ trigger.entity_id }}: low battery voltage detected {{ trigger.to_state.state }} !!'
 
 # Groups
 group: !include groups.yaml
