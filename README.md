@@ -17,7 +17,7 @@ Les mesures sont envoyées vers un _MQTT broker_ (Mosquitto) dans différents _t
 Les _topics_ de ce broker sont actuellement consommés par `HomeAssistant`.
 Les données sont également sauvegardées dans une _TSDB_ (InfluxDB) par `HomeAssistant`.
 
-## To do:
+## TODO:
 ### Sauvegarde des mesures
 La sauvegarde des données dans `InfluxDB` sera revue car `HomeAssistant` ne pousse des données que s'il y a un changement d'état; autrement dit 2 valeurs identiques consécutives ne représentent qu'un point de mesure (le 1ier) dans `InfluxDB`.
 Idée à mettre en oeuvre:
@@ -54,7 +54,44 @@ Améliorations possibles:
 * soit revoir la nomenclature des _topics_ en y ajoutant un niveau supplémentaire: l'_étage_ (ex: `home/groundfloor/livingroom/temperature`).  Source: http://www.hivemq.com/blog/mqtt-essentials-part-5-mqtt-topics-best-practices
 
 ## Quelques sources:
+* mon ami Tixu: https://github.com/tixu
 * Mesure de la tension: http://www.projetsdiy.fr/mesurer-tension-alimentation-batterie-esp8266-arduino/#.WMXEVlXhCHs
 * Utilisation d'un DHT22: http://www.projetsdiy.fr/esp8266-dht22-mqtt-projet-objet-connecte/#.WMXDn1XhCHu
 * Utilisation d'un DS18B20: http://www.esp8266learning.com/wemos-mini-ds18b20-temperature-sensor-example.php
-* mon ami Tixu: https://github.com/tixu
+* InfluxDB et Telegraf sur Raspberry Pi: http://padcom13.blogspot.be/2015/12/influxdb-telegraf-and-grafana-on.html
+* Packages officiels TICK pour ARM:
+ - https://dl.influxdata.com/telegraf/releases/telegraf_1.2.1_armhf.deb
+ - https://dl.influxdata.com/influxdb/releases/influxdb_1.2.1_armhf.deb
+ - https://dl.influxdata.com/chronograf/releases/chronograf_1.2.0~beta4_armhf.deb
+ - https://dl.influxdata.com/kapacitor/releases/kapacitor_1.2.0_armhf.deb
+* Grafana on Raspberry Pi: https://github.com/fg2it/grafana-on-raspberry
+
+## Installation stack TICK sur Raspberry Pi 3
+### Telegraf
+```
+wget https://dl.influxdata.com/telegraf/releases/telegraf_1.2.1_armhf.deb
+sudo dpkg -i telegraf_1.2.1_armhf.deb
+```
+### InfluxDB
+```
+wget https://dl.influxdata.com/influxdb/releases/influxdb_1.2.1_armhf.deb
+sudo dpkg -i influxdb_1.2.1_armhf.deb
+```
+### Chonograph
+```
+wget https://dl.influxdata.com/chronograf/releases/chronograf_1.2.0~beta4_armhf.deb
+sudo dpkg -i chronograph_1.2.0~beta4_armhf.deb
+```
+### kapacitor
+```
+wget https://dl.influxdata.com/kapacitor/releases/kapacitor_1.2.0_armhf.deb
+sudo dpkg -i kapacitor_1.2.0_armhf.deb
+```
+
+## Installation de Grafana
+Basé sur https://github.com/fg2it/grafana-on-raspberry (releases: https://github.com/fg2it/grafana-on-raspberry/releases)
+```
+wget https://github.com/fg2it/grafana-on-raspberry/releases/download/v4.1.2/grafana_4.1.2-1487023783_armhf.deb
+sudo dpkg -i grafana_4.1.2-1487023783_armhf.deb
+sudo apt-get install -f
+```
